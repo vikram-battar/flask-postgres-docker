@@ -1,0 +1,41 @@
+services:
+  app:
+    image: vikrambattar/flask-app:1.0.0
+    container_name: flask-app
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    container_name: postgres-db
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:4
+    container_name: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  dbdata:
