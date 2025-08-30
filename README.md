@@ -137,7 +137,4 @@ docker compose pull
 docker compose up -d --force-recreate
 ```
 
----
 
-## 📜 License
-MIT (or update as you prefer)
